@@ -1,5 +1,7 @@
 # ResearchMind AI
 
+**Live demo: [research-mind-nnak.vercel.app](https://research-mind-nnak.vercel.app)**
+
 A multi-agent research intelligence platform where four specialized Claude AI agents collaborate in real time to research any topic from scratch and deliver a polished, professional report. Think of it as watching a team of AI research associates work live — one searching the web, one analyzing findings, one stress-testing the analysis, and one writing the final report.
 
 ## What it does
@@ -18,9 +20,9 @@ Each agent streams its output live so you can watch the research unfold in real 
 
 ## Tech stack
 
-- **Frontend**: Next.js 14+ with App Router, Tailwind CSS v4
-- **AI**: Anthropic Claude (claude-sonnet-4-20250514) with streaming
-- **Web Search**: `web_search_20250305` tool on the Scout agent
+- **Frontend**: Next.js 16 with App Router, Tailwind CSS v4
+- **AI**: Anthropic Claude (claude-sonnet-4-6) with SSE streaming
+- **Web Search**: `web_search_20250305` tool on the Scout agent, with fallback to knowledge-based research if unavailable
 - **Export**: jsPDF for PDF, docx library for Word documents
 - **Fonts**: Syne (headings), Space Mono (body/terminal)
 
@@ -29,7 +31,7 @@ Each agent streams its output live so you can watch the research unfold in real 
 ### 1. Clone and install
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/sradha-nair/ResearchMind
 cd ResearchMind
 npm install
 ```
@@ -79,11 +81,11 @@ lib/
 3. Add `ANTHROPIC_API_KEY` as an environment variable in your Vercel project settings
 4. Deploy
 
-The app is built to run on Vercel's edge-compatible streaming infrastructure out of the box.
+**Important:** The API route sets `maxDuration = 300` to handle the time Claude needs for web search and long-form generation. On Vercel's Hobby plan the limit is 60 seconds — if agents time out, upgrade to Pro or reduce the number of agents you run.
 
 ## Notes
 
-- Each research session makes 4 separate Claude API calls, one per agent. The Scout agent call enables web search. The Writer agent gets a higher token limit (4096) since it synthesizes all prior output.
-- Agent outputs are passed sequentially — each agent receives the full output of all previous agents as context.
-- Report data is stored in `sessionStorage` between the dashboard and report pages, so no backend persistence is needed.
-- The web search tool requires that your Anthropic account has access to `web_search_20250305`. This is available on claude-sonnet-4-20250514.
+- Each research session makes 4 separate Claude API calls, one per agent. The Scout agent enables web search. The Writer gets a higher token limit (4096) since it synthesizes all prior output.
+- Agent outputs are passed sequentially — each agent receives the full output of all previous agents as context. Outputs are truncated to avoid hitting Claude's context window.
+- If the Scout agent's web search tool is unavailable on your API tier, it automatically retries without the tool so you still get a result.
+- Report data is stored in `sessionStorage` between the dashboard and report pages — no backend persistence needed.

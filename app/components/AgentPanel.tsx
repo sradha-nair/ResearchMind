@@ -188,8 +188,20 @@ export default function AgentPanel({ agent, index }: AgentPanelProps) {
         )}
 
         {agent.status === "error" && (
-          <div style={{ color: "#ef4444", fontSize: "0.7rem", fontFamily: "'Space Mono', monospace" }}>
-            ✗ Agent encountered an error. Check your API key and try again.
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.7rem" }}>
+            {agent.output ? (
+              // Show whatever partial output was received before the error
+              <div>
+                <div className="stream-content">{agent.output}</div>
+                <div style={{ color: "#ef4444", marginTop: "0.5rem" }}>
+                  ✗ Agent stopped early — partial output above may still be used by downstream agents.
+                </div>
+              </div>
+            ) : (
+              <div style={{ color: "#ef4444" }}>
+                ✗ Agent failed — check that your ANTHROPIC_API_KEY is set correctly in Vercel environment variables.
+              </div>
+            )}
           </div>
         )}
       </div>

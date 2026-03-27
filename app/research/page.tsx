@@ -50,7 +50,7 @@ function ResearchDashboard() {
   async function runAgent(agentId: AgentId, agentIndex: number): Promise<string> {
     setAgents((prev) =>
       prev.map((a) =>
-        a.id === agentId ? { ...a, status: "active", startTime: Date.now() } : a
+        a.id === agentId ? { ...a, status: "active", startTime: Date.now(), output: "" } : a
       )
     );
     setCurrentAgentIndex(agentIndex);
@@ -60,6 +60,7 @@ function ResearchDashboard() {
 
     let fullOutput = "";
     let agentErrored = false;
+    let errorMessage = "";
 
     try {
       const res = await fetch("/api/research", {
@@ -74,7 +75,8 @@ function ResearchDashboard() {
       });
 
       if (!res.ok || !res.body) {
-        throw new Error(`API request failed (${res.status})`);
+        const text = await res.text().catch(() => "");
+        throw new Error(`API error ${res.status}: ${text || "no response body"}`);
       }
 
       const reader = res.body.getReader();
@@ -88,7 +90,7 @@ function ResearchDashboard() {
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split("\n\n");
-        buffer = lines.pop() || "";
+        buffer = lines.pop() ?? "";
 
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
@@ -109,6 +111,7 @@ function ResearchDashboard() {
               break;
             } else if (parsed.type === "error") {
               agentErrored = true;
+              errorMessage = parsed.message || "Agent error";
               streamDone = true;
               break;
             }
@@ -122,15 +125,22 @@ function ResearchDashboard() {
         return fullOutput;
       }
       agentErrored = true;
+      errorMessage = (err as Error).message || "Unknown error";
     }
 
-    // Always store whatever output was accumulated, even partial
+    // Always persist whatever was accumulated — downstream agents need this context
     outputsRef.current[agentId] = fullOutput;
 
     setAgents((prev) =>
       prev.map((a) =>
         a.id === agentId
-          ? { ...a, status: agentErrored ? "error" : "done", endTime: Date.now() }
+          ? {
+              ...a,
+              status: agentErrored ? "error" : "done",
+              endTime: Date.now(),
+              // Show error inline in the panel if nothing streamed
+              output: fullOutput || (agentErrored ? `Error: ${errorMessage}` : a.output),
+            }
           : a
       )
     );

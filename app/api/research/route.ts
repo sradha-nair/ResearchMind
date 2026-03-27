@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
       async start(controller) {
         try {
           const requestParams: Parameters<typeof client.messages.stream>[0] = {
-            model: "claude-sonnet-4-20250514",
+            model: "claude-sonnet-4-6",
             max_tokens: agent === "writer" ? 4096 : 2048,
             system: systemPrompt,
             messages: [{ role: "user", content: userMessage }],

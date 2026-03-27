@@ -92,14 +92,11 @@ function ReportView() {
   const [exporting, setExporting] = useState<"pdf" | "word" | null>(null);
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("rm_report") || "";
-    const q = sessionStorage.getItem("rm_query") || "";
-    if (!raw) {
-      router.push("/");
-      return;
-    }
+    const raw = sessionStorage.getItem("rm_report") ?? "";
+    const q = sessionStorage.getItem("rm_query") ?? "";
+    // Don't redirect — if raw is empty show whatever we have (parseReport handles it)
     setReport(parseReport(raw));
-    setQuery(q);
+    setQuery(q || "Research Report");
   }, [router]);
 
   async function exportPDF() {
@@ -212,10 +209,27 @@ function ReportView() {
 
   if (!report) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--bg-base)" }}>
         <div style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.8rem" }}>
           Loading report<span className="animate-blink">...</span>
         </div>
+      </div>
+    );
+  }
+
+  if (!report.raw) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-4" style={{ background: "var(--bg-base)" }}>
+        <div style={{ color: "#ef4444", fontSize: "2rem" }}>✗</div>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.2rem", fontWeight: 700, color: "var(--text-primary)" }}>
+          No report data found
+        </div>
+        <div style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", textAlign: "center", maxWidth: "420px", lineHeight: "1.7" }}>
+          The research pipeline did not produce output — this usually means the API key is missing or invalid. Check your <code style={{ color: "var(--cyan)" }}>ANTHROPIC_API_KEY</code> in <code style={{ color: "var(--cyan)" }}>.env.local</code> and try again.
+        </div>
+        <button className="btn-primary px-6 py-2 rounded text-sm" onClick={() => router.push("/")} style={{ fontSize: "0.8rem" }}>
+          ← Back to Home
+        </button>
       </div>
     );
   }

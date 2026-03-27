@@ -59,6 +59,7 @@ function ResearchDashboard() {
     abortRef.current = controller;
 
     let fullOutput = "";
+    let agentErrored = false;
 
     try {
       const res = await fetch("/api/research", {
@@ -73,14 +74,15 @@ function ResearchDashboard() {
       });
 
       if (!res.ok || !res.body) {
-        throw new Error("API request failed");
+        throw new Error(`API request failed (${res.status})`);
       }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      let streamDone = false;
 
-      while (true) {
+      while (!streamDone) {
         const { done, value } = await reader.read();
         if (done) break;
 
@@ -102,28 +104,34 @@ function ResearchDashboard() {
                   a.id === agentId ? { ...a, output: fullOutput } : a
                 )
               );
-            } else if (parsed.type === "done" || parsed.type === "error") {
+            } else if (parsed.type === "done") {
+              streamDone = true;
+              break;
+            } else if (parsed.type === "error") {
+              agentErrored = true;
+              streamDone = true;
               break;
             }
           } catch {
-            // skip malformed SSE
+            // skip malformed SSE chunk
           }
         }
       }
     } catch (err) {
-      if ((err as Error).name !== "AbortError") {
-        setAgents((prev) =>
-          prev.map((a) => (a.id === agentId ? { ...a, status: "error" } : a))
-        );
+      if ((err as Error).name === "AbortError") {
         return fullOutput;
       }
+      agentErrored = true;
     }
 
+    // Always store whatever output was accumulated, even partial
     outputsRef.current[agentId] = fullOutput;
 
     setAgents((prev) =>
       prev.map((a) =>
-        a.id === agentId ? { ...a, status: "done", endTime: Date.now() } : a
+        a.id === agentId
+          ? { ...a, status: agentErrored ? "error" : "done", endTime: Date.now() }
+          : a
       )
     );
 

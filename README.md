@@ -1,7 +1,5 @@
 # ResearchMind AI
 
-**Live demo: [research-mind-nnak.vercel.app](https://research-mind-nnak.vercel.app)**
-
 A multi-agent research intelligence platform where four specialized Claude AI agents collaborate in real time to research any topic from scratch and deliver a polished, professional report. Think of it as watching a team of AI research associates work live — one searching the web, one analyzing findings, one stress-testing the analysis, and one writing the final report.
 
 ## What it does

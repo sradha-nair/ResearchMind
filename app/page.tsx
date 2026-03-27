@@ -12,27 +12,35 @@ const SAMPLE_QUERIES = [
 
 const PIPELINE_STEPS = [
   {
-    icon: "⬡",
+    number: "01",
     name: "Scout",
-    color: "#00d4ff",
-    desc: "Searches the live web for sources, data, and raw intelligence.",
+    color: "var(--agent-scout)",
+    bg: "#edf4f1",
+    border: "#c4ddd6",
+    desc: "Searches the live web for primary sources, data, and raw intelligence.",
   },
   {
-    icon: "◈",
+    number: "02",
     name: "Analyst",
-    color: "#7c6fff",
-    desc: "Identifies patterns, trends, and knowledge gaps from Scout's findings.",
+    color: "var(--agent-analyst)",
+    bg: "#f1f4ed",
+    border: "#d0d9c4",
+    desc: "Identifies patterns, trends, and knowledge gaps across findings.",
   },
   {
-    icon: "◇",
+    number: "03",
     name: "Critic",
-    color: "#f59e0b",
-    desc: "Challenges weak assumptions and adds counterarguments.",
+    color: "var(--agent-critic)",
+    bg: "#f6f2ed",
+    border: "#ddd0c0",
+    desc: "Stress-tests the analysis and surfaces counterarguments.",
   },
   {
-    icon: "◉",
+    number: "04",
     name: "Writer",
-    color: "#22c55e",
+    color: "var(--agent-writer)",
+    bg: "#edf1f6",
+    border: "#c0cedd",
     desc: "Synthesizes everything into a polished research report.",
   },
 ];
@@ -45,169 +53,161 @@ export default function LandingPage() {
   function handleStart() {
     if (!query.trim() || isLoading) return;
     setIsLoading(true);
-    const encoded = encodeURIComponent(query.trim());
-    router.push(`/research?q=${encoded}`);
+    router.push(`/research?q=${encodeURIComponent(query.trim())}`);
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      handleStart();
-    }
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleStart();
   }
 
   return (
-    <main className="min-h-screen grid-bg flex flex-col items-center justify-center px-4 py-16 relative">
-      {/* Ambient glow */}
-      <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%)" }}
-      />
+    <main className="min-h-screen grid-bg flex flex-col">
+      {/* Nav */}
+      <nav
+        className="flex items-center justify-between px-8 py-5 border-b"
+        style={{ background: "rgba(244,246,241,0.9)", borderColor: "var(--border)", backdropFilter: "blur(8px)" }}
+      >
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-7 h-7 rounded-md flex items-center justify-center"
+            style={{ background: "var(--sage)" }}
+          >
+            <span style={{ color: "#fff", fontSize: "0.75rem", fontWeight: 700, fontFamily: "'Syne', sans-serif" }}>R</span>
+          </div>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "0.95rem", color: "var(--text-primary)" }}>
+            ResearchMind
+          </span>
+        </div>
+        <div
+          className="text-xs px-3 py-1 rounded-full"
+          style={{ background: "var(--sage-dim)", color: "var(--sage)", border: "1px solid var(--sage-pale)", fontWeight: 500 }}
+        >
+          Powered by Claude
+        </div>
+      </nav>
 
-      <div className="w-full max-w-3xl flex flex-col items-center gap-10 z-10">
-        {/* Header */}
-        <div className="flex flex-col items-center gap-4 text-center animate-fade-in-up">
-          <div className="flex items-center gap-3 mb-2">
-            <span
-              className="text-2xl animate-pulse-ring"
-              style={{ color: "var(--cyan)", filter: "drop-shadow(0 0 8px var(--cyan))" }}
-            >
-              ◎
-            </span>
-            <span
-              className="text-xs tracking-widest uppercase"
-              style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace" }}
+      {/* Hero */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-20">
+        <div className="w-full max-w-2xl flex flex-col items-center gap-8">
+
+          {/* Heading */}
+          <div className="flex flex-col items-center gap-4 text-center animate-fade-in-up">
+            <div
+              className="text-xs tracking-widest uppercase px-3 py-1.5 rounded-full"
+              style={{ color: "var(--sage)", background: "var(--sage-dim)", border: "1px solid var(--sage-pale)", fontWeight: 600, letterSpacing: "0.1em" }}
             >
               Multi-Agent Research Intelligence
-            </span>
+            </div>
+
+            <h1
+              className="text-5xl sm:text-6xl font-extrabold leading-tight tracking-tight"
+              style={{ fontFamily: "'Syne', sans-serif", color: "var(--text-primary)", letterSpacing: "-0.02em" }}
+            >
+              Research, at the<br />
+              <span style={{ color: "var(--sage)" }}>speed of thought.</span>
+            </h1>
+
+            <p
+              className="max-w-lg text-base leading-relaxed"
+              style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}
+            >
+              Four specialized AI agents collaborate in real time — gathering sources,
+              analyzing data, stress-testing assumptions, and writing your report.
+            </p>
           </div>
 
-          <h1
-            className="text-5xl sm:text-6xl font-extrabold leading-tight tracking-tight"
-            style={{ fontFamily: "'Syne', sans-serif" }}
-          >
-            <span className="gradient-text">ResearchMind</span>
-            <span style={{ color: "var(--text-primary)" }}> AI</span>
-          </h1>
-
-          <p
-            className="text-lg max-w-xl"
-            style={{ color: "var(--text-secondary)", fontFamily: "'Space Mono', monospace", fontSize: "0.85rem", lineHeight: "1.8" }}
-          >
-            Four specialized AI agents work in real time — searching the web, analyzing data,
-            stress-testing assumptions, and writing a professional report. All for any topic you
-            throw at them.
-          </p>
-        </div>
-
-        {/* Query input */}
-        <div className="w-full flex flex-col gap-3">
-          <div
-            className="w-full rounded-lg border overflow-hidden transition-all duration-300"
-            style={{ borderColor: query ? "var(--cyan)" : "var(--border)", background: "var(--bg-card)", boxShadow: query ? "0 0 24px var(--cyan-dim)" : "none" }}
-          >
-            <textarea
-              className="w-full bg-transparent resize-none outline-none px-5 py-4 text-sm"
-              style={{
-                color: "var(--text-primary)",
-                fontFamily: "'Space Mono', monospace",
-                fontSize: "0.85rem",
-                lineHeight: "1.7",
-                minHeight: "100px",
-              }}
-              placeholder="Enter your research question... (e.g. Analyze the impact of LLMs on healthcare in 2025)"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
+          {/* Input */}
+          <div className="w-full flex flex-col gap-3">
             <div
-              className="flex items-center justify-between px-5 py-3 border-t"
-              style={{ borderColor: "var(--border)" }}
+              className="w-full rounded-xl border overflow-hidden transition-all duration-200"
+              style={{
+                borderColor: query ? "var(--sage-mid)" : "var(--border)",
+                background: "var(--bg-surface)",
+                boxShadow: query ? "0 0 0 3px var(--sage-dim)" : "0 1px 4px rgba(0,0,0,0.06)",
+              }}
             >
-              <span style={{ color: "var(--text-muted)", fontSize: "0.7rem", fontFamily: "'Space Mono', monospace" }}>
-                ⌘ + Enter to start
-              </span>
-              <button
-                className="btn-primary px-6 py-2 rounded text-sm"
-                onClick={handleStart}
-                disabled={!query.trim() || isLoading}
+              <textarea
+                className="w-full bg-transparent resize-none outline-none px-5 pt-4 pb-3"
+                style={{
+                  color: "var(--text-primary)",
+                  fontSize: "0.95rem",
+                  lineHeight: "1.65",
+                  minHeight: "96px",
+                }}
+                placeholder="Enter your research question — e.g. Analyze the impact of LLMs on healthcare in 2025"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <div
+                className="flex items-center justify-between px-5 py-3 border-t"
+                style={{ borderColor: "var(--border)", background: "var(--bg-subtle)" }}
               >
-                {isLoading ? "Launching..." : "Start Research →"}
-              </button>
+                <span style={{ color: "var(--text-faint)", fontSize: "0.75rem" }}>
+                  ⌘ + Enter to start
+                </span>
+                <button
+                  className="btn-primary px-5 py-2 rounded-lg text-sm"
+                  onClick={handleStart}
+                  disabled={!query.trim() || isLoading}
+                >
+                  {isLoading ? "Starting..." : "Start Research →"}
+                </button>
+              </div>
+            </div>
+
+            {/* Sample queries */}
+            <div className="flex flex-wrap gap-2">
+              {SAMPLE_QUERIES.map((q) => (
+                <button
+                  key={q}
+                  className="btn-ghost rounded-lg px-3 py-1.5"
+                  style={{ fontSize: "0.72rem" }}
+                  onClick={() => setQuery(q)}
+                >
+                  {q}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Sample queries */}
-          <div className="flex flex-wrap gap-2">
-            {SAMPLE_QUERIES.map((q) => (
-              <button
-                key={q}
-                className="btn-ghost text-xs px-3 py-1.5 rounded"
-                style={{ fontSize: "0.65rem" }}
-                onClick={() => setQuery(q)}
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Pipeline visualization */}
-        <div className="w-full">
-          <div
-            className="text-center mb-6 text-xs tracking-widest uppercase"
-            style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace" }}
-          >
-            The 4-Agent Pipeline
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {PIPELINE_STEPS.map((step, i) => (
-              <div key={step.name} className="flex flex-col items-center gap-2">
-                {/* Card */}
+          {/* Pipeline steps */}
+          <div className="w-full">
+            <div
+              className="text-center mb-5"
+              style={{ color: "var(--text-faint)", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600 }}
+            >
+              The 4-Agent Pipeline
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {PIPELINE_STEPS.map((step) => (
                 <div
-                  className="w-full rounded-lg border p-4 flex flex-col items-center gap-2 text-center transition-all duration-300 hover:border-opacity-60"
-                  style={{
-                    background: "var(--bg-card)",
-                    borderColor: "var(--border)",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = step.color;
-                    (e.currentTarget as HTMLElement).style.boxShadow = `0 0 16px ${step.color}22`;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                    (e.currentTarget as HTMLElement).style.boxShadow = "none";
-                  }}
+                  key={step.name}
+                  className="rounded-xl border p-4 transition-all duration-200"
+                  style={{ background: step.bg, borderColor: step.border }}
                 >
-                  <span className="text-2xl" style={{ color: step.color, filter: `drop-shadow(0 0 6px ${step.color})` }}>
-                    {step.icon}
-                  </span>
-                  <div>
-                    <div className="text-sm font-bold mb-0.5" style={{ fontFamily: "'Syne', sans-serif", color: step.color }}>
-                      {step.name}
-                    </div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontFamily: "'Space Mono', monospace", lineHeight: "1.5" }}>
-                      {step.desc}
-                    </div>
+                  <div
+                    className="text-xs font-bold mb-2"
+                    style={{ color: step.color, fontFamily: "'Syne', sans-serif", letterSpacing: "0.05em" }}
+                  >
+                    {step.number} — {step.name}
+                  </div>
+                  <div style={{ color: "var(--text-muted)", fontSize: "0.72rem", lineHeight: "1.55" }}>
+                    {step.desc}
                   </div>
                 </div>
-
-                {/* Step number */}
-                <span style={{ color: "var(--text-muted)", fontSize: "0.6rem", fontFamily: "'Space Mono', monospace" }}>
-                  0{i + 1}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Footer */}
-        <div
-          className="text-center"
-          style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontFamily: "'Space Mono', monospace" }}
-        >
-          Powered by Claude claude-sonnet-4-20250514 · Live web search · Real-time streaming
-        </div>
+      {/* Footer */}
+      <div
+        className="text-center py-5 border-t"
+        style={{ borderColor: "var(--border)", color: "var(--text-faint)", fontSize: "0.72rem" }}
+      >
+        Claude claude-sonnet-4-6 · Live web search · Real-time streaming
       </div>
     </main>
   );

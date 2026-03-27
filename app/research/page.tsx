@@ -179,109 +179,104 @@ function ResearchDashboard() {
   const completedCount = agents.filter((a) => a.status === "done").length;
 
   return (
-    <main className="min-h-screen dot-bg flex flex-col" style={{ background: "var(--bg-base)" }}>
+    <main className="min-h-screen dot-bg flex flex-col">
       {/* Top bar */}
       <div
-        className="flex items-center justify-between px-6 py-4 border-b"
-        style={{ borderColor: "var(--border)", background: "rgba(13,21,38,0.95)", backdropFilter: "blur(8px)" }}
+        className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b"
+        style={{ borderColor: "var(--border)", background: "rgba(244,246,241,0.95)", backdropFilter: "blur(8px)" }}
       >
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-6 h-6 rounded-md flex items-center justify-center"
+              style={{ background: "var(--sage)" }}
+            >
+              <span style={{ color: "#fff", fontSize: "0.65rem", fontWeight: 700, fontFamily: "'Syne', sans-serif" }}>R</span>
+            </div>
+            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "var(--text-primary)" }}>
+              ResearchMind
+            </span>
+          </div>
+          <div className="w-px h-4" style={{ background: "var(--border)" }} />
           <button
             onClick={handleNewResearch}
-            className="flex items-center gap-2 text-sm transition-colors"
-            style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.75rem" }}
-            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--cyan)")}
+            className="text-sm transition-colors"
+            style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}
+            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--sage)")}
             onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-muted)")}
           >
             ← New Research
           </button>
-          <div className="w-px h-4" style={{ background: "var(--border)" }} />
-          <div style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.7rem" }}>
-            ResearchMind AI
-          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Progress */}
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              {AGENT_ORDER.map((id) => {
-                const a = agents.find((ag) => ag.id === id);
-                return (
-                  <div
-                    key={id}
-                    className="w-2 h-2 rounded-full transition-all duration-300"
-                    style={{
-                      background:
-                        a?.status === "done"
-                          ? "#22c55e"
-                          : a?.status === "active"
-                          ? "var(--cyan)"
-                          : "var(--border)",
-                      boxShadow: a?.status === "active" ? "0 0 6px var(--cyan)" : "none",
-                    }}
-                  />
-                );
-              })}
-            </div>
-            <span style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontFamily: "'Space Mono', monospace" }}>
-              {completedCount}/4 agents
+        <div className="flex items-center gap-3">
+          {/* Step dots */}
+          <div className="flex items-center gap-1.5">
+            {AGENT_ORDER.map((id) => {
+              const a = agents.find((ag) => ag.id === id);
+              return (
+                <div
+                  key={id}
+                  className="w-2 h-2 rounded-full transition-all duration-300"
+                  style={{
+                    background:
+                      a?.status === "done" ? "var(--status-done)" :
+                      a?.status === "active" ? "var(--sage)" :
+                      "var(--border)",
+                  }}
+                />
+              );
+            })}
+            <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", marginLeft: "4px" }}>
+              {completedCount}/4
             </span>
           </div>
 
           {hasStarted && !isComplete && (
             <div
-              className="flex items-center gap-1.5 px-2 py-1 rounded"
-              style={{ background: "var(--cyan-dim)", border: "1px solid var(--cyan)", borderColor: "rgba(0,212,255,0.3)" }}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full"
+              style={{ background: "var(--sage-dim)", border: "1px solid var(--sage-pale)" }}
             >
-              <div className="w-1.5 h-1.5 rounded-full animate-pulse-ring" style={{ background: "var(--cyan)" }} />
-              <span style={{ color: "var(--cyan)", fontSize: "0.65rem", fontFamily: "'Space Mono', monospace" }}>
+              <div className="w-1.5 h-1.5 rounded-full animate-pulse-ring" style={{ background: "var(--sage)" }} />
+              <span style={{ color: "var(--sage)", fontSize: "0.72rem", fontWeight: 500 }}>
                 {formatTime(elapsedTime)}
               </span>
             </div>
           )}
 
           {isComplete && (
-            <button className="btn-primary px-4 py-2 rounded text-sm" onClick={handleViewReport}>
+            <button className="btn-primary px-4 py-2 rounded-lg text-sm" onClick={handleViewReport}>
               View Report →
             </button>
           )}
         </div>
       </div>
 
-      {/* Query display */}
+      {/* Query bar */}
       <div
         className="px-6 py-4 border-b"
-        style={{ borderColor: "var(--border)", background: "rgba(0,0,0,0.2)" }}
+        style={{ borderColor: "var(--border)", background: "var(--bg-surface)" }}
       >
-        <div style={{ color: "var(--text-muted)", fontSize: "0.6rem", fontFamily: "'Space Mono', monospace", marginBottom: "0.25rem" }}>
-          RESEARCH QUERY
+        <div style={{ color: "var(--text-faint)", fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.3rem" }}>
+          Research Query
         </div>
-        <div
-          className="text-sm"
-          style={{ color: "var(--text-primary)", fontFamily: "'Syne', sans-serif", fontWeight: 600 }}
-        >
+        <div style={{ color: "var(--text-primary)", fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "0.95rem" }}>
           {query}
         </div>
       </div>
 
-      {/* Agent pipeline */}
+      {/* Pipeline */}
       <div className="flex-1 px-4 sm:px-6 py-6 overflow-y-auto">
-        <div className="max-w-5xl mx-auto flex flex-col gap-0">
+        <div className="max-w-3xl mx-auto flex flex-col">
           {agents.map((agent, index) => {
             const isActive = agent.status === "active";
             const prevDone = index === 0 || agents[index - 1].status === "done";
             const showConnector = index < agents.length - 1;
-
             return (
               <div key={agent.id}>
-                <div
-                  className="animate-fade-in-up"
-                  style={{ animationDelay: `${index * 80}ms` }}
-                >
+                <div className="animate-fade-in-up" style={{ animationDelay: `${index * 80}ms` }}>
                   <AgentPanel agent={agent} index={index} />
                 </div>
-
                 {showConnector && (
                   <FlowConnector
                     active={isActive || (prevDone && agents[index + 1].status === "active")}
@@ -293,31 +288,25 @@ function ResearchDashboard() {
           })}
         </div>
 
-        {/* Complete state */}
+        {/* Complete banner */}
         {isComplete && (
           <div
-            className="max-w-5xl mx-auto mt-6 rounded-lg border p-6 text-center animate-fade-in-up"
-            style={{
-              borderColor: "#22c55e44",
-              background: "rgba(34,197,94,0.05)",
-            }}
+            className="max-w-3xl mx-auto mt-5 rounded-xl border p-6 text-center animate-fade-in-up"
+            style={{ borderColor: "var(--sage-pale)", background: "var(--bg-surface)", boxShadow: "0 2px 12px rgba(92,122,92,0.08)" }}
           >
-            <div className="text-2xl mb-2" style={{ color: "#22c55e" }}>
-              ✓
-            </div>
             <div
-              className="text-lg font-bold mb-1"
-              style={{ fontFamily: "'Syne', sans-serif", color: "#22c55e" }}
+              className="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-3"
+              style={{ background: "var(--sage-dim)", border: "1px solid var(--sage-pale)" }}
             >
-              Research Complete
+              <span style={{ color: "var(--sage)", fontSize: "1rem" }}>✓</span>
             </div>
-            <div
-              className="text-sm mb-4"
-              style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.75rem" }}
-            >
-              All 4 agents finished in {formatTime(elapsedTime)}. Your report is ready.
+            <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "1rem", color: "var(--text-primary)", marginBottom: "0.4rem" }}>
+              Research complete
             </div>
-            <button className="btn-primary px-8 py-3 rounded-lg text-base" onClick={handleViewReport}>
+            <div style={{ color: "var(--text-muted)", fontSize: "0.82rem", marginBottom: "1.25rem" }}>
+              All 4 agents finished in {formatTime(elapsedTime)}.
+            </div>
+            <button className="btn-primary px-7 py-2.5 rounded-lg text-sm" onClick={handleViewReport}>
               View Full Report →
             </button>
           </div>
@@ -331,8 +320,8 @@ export default function ResearchPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
-        <div style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.8rem" }}>
-          Initializing pipeline<span className="animate-blink">...</span>
+        <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
+          Initializing<span className="animate-blink">...</span>
         </div>
       </div>
     }>

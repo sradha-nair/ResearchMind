@@ -209,9 +209,9 @@ function ReportView() {
 
   if (!report) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--bg-base)" }}>
-        <div style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.8rem" }}>
-          Loading report<span className="animate-blink">...</span>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+        <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
+          Loading<span className="animate-blink">...</span>
         </div>
       </div>
     );
@@ -219,140 +219,145 @@ function ReportView() {
 
   if (!report.raw) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-4" style={{ background: "var(--bg-base)" }}>
-        <div style={{ color: "#ef4444", fontSize: "2rem" }}>✗</div>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.2rem", fontWeight: 700, color: "var(--text-primary)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-4" style={{ background: "var(--bg-base)" }}>
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center"
+          style={{ background: "#fef2f2", border: "1px solid #fecaca" }}
+        >
+          <span style={{ color: "var(--status-error)", fontSize: "1.2rem" }}>✗</span>
+        </div>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
           No report data found
         </div>
-        <div style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", textAlign: "center", maxWidth: "420px", lineHeight: "1.7" }}>
-          The research pipeline did not produce output — this usually means the API key is missing or invalid. Check your <code style={{ color: "var(--cyan)" }}>ANTHROPIC_API_KEY</code> in <code style={{ color: "var(--cyan)" }}>.env.local</code> and try again.
+        <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", textAlign: "center", maxWidth: "400px", lineHeight: "1.7" }}>
+          The research pipeline did not produce output. Check that your{" "}
+          <code style={{ color: "var(--sage)", background: "var(--sage-dim)", padding: "1px 5px", borderRadius: "4px" }}>ANTHROPIC_API_KEY</code>{" "}
+          is set in your Vercel environment variables.
         </div>
-        <button className="btn-primary px-6 py-2 rounded text-sm" onClick={() => router.push("/")} style={{ fontSize: "0.8rem" }}>
+        <button className="btn-primary px-5 py-2.5 rounded-lg text-sm" onClick={() => router.push("/")}>
           ← Back to Home
         </button>
       </div>
     );
   }
 
+  const agentTags = [
+    { label: "Scout", color: "var(--agent-scout)", bg: "#edf4f1", border: "#c4ddd6" },
+    { label: "Analyst", color: "var(--agent-analyst)", bg: "#f1f4ed", border: "#d0d9c4" },
+    { label: "Critic", color: "var(--agent-critic)", bg: "#f6f2ed", border: "#ddd0c0" },
+    { label: "Writer", color: "var(--agent-writer)", bg: "#edf1f6", border: "#c0cedd" },
+  ];
+
   return (
     <main className="min-h-screen" style={{ background: "var(--bg-base)" }}>
       {/* Top bar */}
       <div
         className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b"
-        style={{ borderColor: "var(--border)", background: "rgba(10,15,30,0.95)", backdropFilter: "blur(8px)" }}
+        style={{ borderColor: "var(--border)", background: "rgba(244,246,241,0.95)", backdropFilter: "blur(8px)" }}
       >
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-6 h-6 rounded-md flex items-center justify-center"
+              style={{ background: "var(--sage)" }}
+            >
+              <span style={{ color: "#fff", fontSize: "0.65rem", fontWeight: 700, fontFamily: "'Syne', sans-serif" }}>R</span>
+            </div>
+            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "var(--text-primary)" }}>
+              ResearchMind
+            </span>
+          </div>
+          <div className="w-px h-4" style={{ background: "var(--border)" }} />
           <button
             onClick={() => router.push("/")}
-            className="text-sm transition-colors"
-            style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.75rem" }}
-            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--cyan)")}
+            className="text-sm"
+            style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}
+            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--sage)")}
             onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-muted)")}
           >
             ← New Research
           </button>
           <div
-            className="flex items-center gap-2 px-2 py-1 rounded"
-            style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)" }}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+            style={{ background: "var(--sage-dim)", border: "1px solid var(--sage-pale)" }}
           >
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e" }} />
-            <span style={{ color: "#22c55e", fontSize: "0.6rem", fontFamily: "'Space Mono', monospace" }}>
-              Report Ready
-            </span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--status-done)" }} />
+            <span style={{ color: "var(--sage)", fontSize: "0.65rem", fontWeight: 600 }}>Report Ready</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            className="btn-ghost px-4 py-2 rounded text-sm flex items-center gap-2"
-            onClick={exportWord}
-            disabled={!!exporting}
-            style={{ fontSize: "0.75rem" }}
-          >
+          <button className="btn-ghost px-4 py-2 rounded-lg text-sm" onClick={exportWord} disabled={!!exporting} style={{ fontSize: "0.78rem" }}>
             {exporting === "word" ? "Exporting..." : "↓ Word"}
           </button>
-          <button
-            className="btn-secondary px-4 py-2 rounded text-sm flex items-center gap-2"
-            onClick={exportPDF}
-            disabled={!!exporting}
-            style={{ fontSize: "0.75rem" }}
-          >
+          <button className="btn-secondary px-4 py-2 rounded-lg text-sm" onClick={exportPDF} disabled={!!exporting} style={{ fontSize: "0.78rem" }}>
             {exporting === "pdf" ? "Exporting..." : "↓ PDF"}
           </button>
         </div>
       </div>
 
-      {/* Report content */}
-      <div className="max-w-3xl mx-auto px-6 py-10">
-        {/* Report header */}
-        <div className="mb-10 pb-6 border-b" style={{ borderColor: "var(--border)" }}>
+      {/* Report */}
+      <div className="max-w-2xl mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="mb-10 pb-8 border-b" style={{ borderColor: "var(--border)" }}>
           <div
-            className="text-xs mb-3 tracking-widest uppercase"
-            style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace" }}
+            className="text-xs mb-4 font-semibold tracking-widest uppercase"
+            style={{ color: "var(--text-faint)", letterSpacing: "0.12em" }}
           >
             ResearchMind AI · Research Report
           </div>
           <h1
-            className="text-3xl font-extrabold mb-3 leading-tight"
-            style={{ fontFamily: "'Syne', sans-serif", color: "var(--text-primary)" }}
+            className="text-3xl font-extrabold mb-4 leading-tight"
+            style={{ fontFamily: "'Syne', sans-serif", color: "var(--text-primary)", letterSpacing: "-0.02em" }}
           >
             {query}
           </h1>
-          <div className="flex flex-wrap items-center gap-4">
-            <span style={{ color: "var(--text-muted)", fontSize: "0.7rem", fontFamily: "'Space Mono', monospace" }}>
+          <div className="flex flex-wrap items-center gap-3">
+            <span style={{ color: "var(--text-faint)", fontSize: "0.78rem" }}>
               {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
             </span>
-            {["Scout", "Analyst", "Critic", "Writer"].map((agent, i) => {
-              const colors = ["#00d4ff", "#7c6fff", "#f59e0b", "#22c55e"];
-              return (
-                <span
-                  key={agent}
-                  className="px-2 py-0.5 rounded text-xs"
-                  style={{
-                    background: `${colors[i]}22`,
-                    border: `1px solid ${colors[i]}44`,
-                    color: colors[i],
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: "0.6rem",
-                  }}
-                >
-                  {agent}
-                </span>
-              );
-            })}
+            {agentTags.map((t) => (
+              <span
+                key={t.label}
+                className="px-2.5 py-0.5 rounded-full text-xs font-medium"
+                style={{ background: t.bg, border: `1px solid ${t.border}`, color: t.color, fontSize: "0.68rem" }}
+              >
+                {t.label}
+              </span>
+            ))}
           </div>
         </div>
 
         {/* Sections */}
         <div className="report-body">
-          <ReportSection title="Executive Summary" content={report.executiveSummary} color="var(--cyan)" />
-          <ReportSection title="Key Findings" content={report.keyFindings} color="#7c6fff" />
-          <ReportSection title="Analysis" content={report.analysis} color="var(--text-primary)" />
-          <ReportSection title="Counterpoints & Alternative Perspectives" content={report.counterpoints} color="#f59e0b" />
-          <ReportSection title="Conclusion" content={report.conclusion} color="#22c55e" />
+          <ReportSection title="Executive Summary" content={report.executiveSummary} color="var(--sage)" />
+          <ReportSection title="Key Findings" content={report.keyFindings} color="var(--agent-analyst)" />
+          <ReportSection title="Analysis" content={report.analysis} color="var(--text-secondary)" />
+          <ReportSection title="Counterpoints & Alternative Perspectives" content={report.counterpoints} color="var(--agent-critic)" />
+          <ReportSection title="Conclusion" content={report.conclusion} color="var(--agent-writer)" />
           <ReportSection title="Sources" content={report.sources} color="var(--text-muted)" />
         </div>
 
-        {/* Raw output fallback */}
         {!report.executiveSummary && !report.keyFindings && (
-          <div className="stream-content" style={{ opacity: 0.85 }}>
-            {report.raw}
-          </div>
+          <div className="stream-content">{report.raw}</div>
         )}
 
-        {/* Actions */}
-        <div className="mt-12 pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderColor: "var(--border)" }}>
-          <div style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontFamily: "'Space Mono', monospace" }}>
+        {/* Footer actions */}
+        <div
+          className="mt-12 pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <div style={{ color: "var(--text-faint)", fontSize: "0.72rem" }}>
             Generated by 4 Claude AI agents · ResearchMind AI
           </div>
-          <div className="flex items-center gap-3">
-            <button className="btn-ghost px-4 py-2 rounded text-sm" onClick={exportWord} disabled={!!exporting} style={{ fontSize: "0.75rem" }}>
+          <div className="flex items-center gap-2">
+            <button className="btn-ghost px-4 py-2 rounded-lg text-sm" onClick={exportWord} disabled={!!exporting} style={{ fontSize: "0.78rem" }}>
               {exporting === "word" ? "..." : "Export as Word"}
             </button>
-            <button className="btn-secondary px-4 py-2 rounded text-sm" onClick={exportPDF} disabled={!!exporting} style={{ fontSize: "0.75rem" }}>
+            <button className="btn-secondary px-4 py-2 rounded-lg text-sm" onClick={exportPDF} disabled={!!exporting} style={{ fontSize: "0.78rem" }}>
               {exporting === "pdf" ? "..." : "Export as PDF"}
             </button>
-            <button className="btn-primary px-4 py-2 rounded text-sm" onClick={() => router.push("/")} style={{ fontSize: "0.75rem" }}>
+            <button className="btn-primary px-4 py-2 rounded-lg text-sm" onClick={() => router.push("/")}>
               New Research
             </button>
           </div>
@@ -366,7 +371,7 @@ export default function ReportPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
-        <div style={{ color: "var(--text-muted)", fontFamily: "'Space Mono', monospace", fontSize: "0.8rem" }}>
+        <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
           Loading<span className="animate-blink">...</span>
         </div>
       </div>

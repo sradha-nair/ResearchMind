@@ -6,50 +6,26 @@ interface FlowConnectorProps {
 }
 
 export default function FlowConnector({ active, done }: FlowConnectorProps) {
+  const lineColor = done
+    ? "var(--status-done)"
+    : active
+    ? "var(--sage-mid)"
+    : "var(--border)";
+
+  const opacity = done ? 0.5 : active ? 0.7 : 0.35;
+
   return (
-    <div className="flex items-center justify-center py-1">
-      <div className="flex flex-col items-center gap-1">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="w-0.5 h-2 rounded-full transition-all duration-500"
-            style={{
-              background: done
-                ? "#22c55e"
-                : active
-                ? "var(--cyan)"
-                : "var(--border)",
-              opacity: done ? 0.8 : active ? 1 - i * 0.2 : 0.3,
-              boxShadow: active ? "0 0 4px var(--cyan)" : done ? "0 0 4px #22c55e" : "none",
-              animationDelay: `${i * 150}ms`,
-            }}
-          />
-        ))}
+    <div className="flex items-center justify-center py-1.5">
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="w-px h-3 rounded-full transition-all duration-500" style={{ background: lineColor, opacity }} />
         <div
-          className="text-xs transition-all duration-500"
+          className="w-1.5 h-1.5 rounded-full transition-all duration-500"
           style={{
-            color: done ? "#22c55e" : active ? "var(--cyan)" : "var(--border)",
-            fontSize: "0.5rem",
-            transform: "rotate(90deg)",
+            background: lineColor,
+            opacity: done ? 0.6 : active ? 0.9 : 0.2,
           }}
-        >
-          ▶
-        </div>
-        {[0, 1, 2].map((i) => (
-          <div
-            key={`b${i}`}
-            className="w-0.5 h-2 rounded-full transition-all duration-500"
-            style={{
-              background: done
-                ? "#22c55e"
-                : active
-                ? "var(--cyan)"
-                : "var(--border)",
-              opacity: done ? 0.8 : active ? 0.2 + i * 0.2 : 0.3,
-              boxShadow: active ? "0 0 4px var(--cyan)" : done ? "0 0 4px #22c55e" : "none",
-            }}
-          />
-        ))}
+        />
+        <div className="w-px h-3 rounded-full transition-all duration-500" style={{ background: lineColor, opacity }} />
       </div>
     </div>
   );
